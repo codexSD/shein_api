@@ -16,7 +16,7 @@ export class ResponseBuilder {
     return this;
   }
 
-  public err(message: string = '', errors = null) {
+  public err(message: string = '', errors: any = null) {
     this.success = false;
     this.errors = errors;
     this.setMessage(message);

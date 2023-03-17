@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { check } from 'express-validator';
+import { safeRoute } from './safe.route';
 import { UserController } from './user.controller';
 
 const router: Router = Router();
@@ -12,7 +13,7 @@ router.post(
     check('key', 'Field required').exists(),
     check('phone', 'Field required').exists(),
   ],
-  userController.create
+  safeRoute(userController.create)
 );
 
 export default router;

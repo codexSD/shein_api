@@ -7,6 +7,12 @@ export class UserCreated implements DomainEvent {
     this.user = user;
   }
 }
+export class UserLoggedIn implements DomainEvent{
+  user: User;
+  constructor(user: User) {
+    this.user = user;
+  }  
+}
 export class WelcomeEmail implements DomainEventSubscriber {
   handle(event: DomainEvent): void {
     console.log('User Created: ' + (event as UserCreated).user);

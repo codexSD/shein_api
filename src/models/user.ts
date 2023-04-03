@@ -3,11 +3,12 @@ import { Password } from '../common/password';
 import { Request } from 'express';
 
 export class User {
-  id: number | undefined;
+  id: number;
   name: string;
   phone: PhoneNumber;
   password: Password;
   constructor(name: string, phone: PhoneNumber, password: Password) {
+    this.id = 0;
     this.name = name;
     this.phone = phone;
     this.password = password;

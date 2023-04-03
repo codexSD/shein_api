@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { check } from 'express-validator';
-import { safeRoute } from './safe.route';
+import { safeRoute,safeTokenizedRoute } from './safe.route';
 import { UserController } from './user.controller';
 
 const router: Router = Router();
@@ -21,7 +21,7 @@ router.put(
   [
     check('name','Field required').exists(),
   ],
-  safeRoute(userController.updateName)
+  safeTokenizedRoute(userController.updateName)
 );
 
 //Login

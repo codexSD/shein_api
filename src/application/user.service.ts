@@ -18,23 +18,22 @@ export class UserService implements ApplicationService {
     if (!(await this.userDatabase.isPhoneUnique(user.phone))) throw new PhoneNumberIsNotUnique();
     return this.createNewUser(user);
   }
-  public async updateName(name:String):Promise<boolean>{
-    return await this.userDatabase.updateName(name);
+  public async updateName(id:number,name:String):Promise<boolean>{
+    return await this.userDatabase.updateName(id,name);
+  }
+  public async get(id:number):Promise<User|null>{
+    return await this.userDatabase.getUser(id);
   }
   private async createNewUser(user: User): Promise<User> {
     var newUser = await this.userDatabase.create(user);
     this.publisher.publish(new UserCreated(user));
     return newUser;
   }
-  public async login(key:number,phone:number,password:string):Promise<string>{
+  public async login(key:number,phone:number,password:string):Promise<User>{
     var newUser = await this.userDatabase.login(key,phone,password);
     if(newUser == null) throw new LoginNotValid();
     this.publisher.publish(new UserLoggedIn(newUser));
-    var tk = jwt.sign(
-      {id: newUser.id, exp: Math.floor(Date.now() / 1000) + (60 * 60 * 48)}
-      ,process.env.JWT_SECRET as string
-    );
-    return tk;
+    return newUser;
     // return newUser;
   }
   static getType(): string {

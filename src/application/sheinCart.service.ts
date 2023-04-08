@@ -8,14 +8,17 @@ import { DomainEventPublisher } from "../events/interfaces";
 import { SheinCartAdded, SheinCartStatusChanged } from "../events/sheinCart.events";
 
 export class SheinCartService implements ApplicationService{
+    static getType(): string {
+        return 'SheinCartService';
+    }
     private db:SheinCartDatabase;
     private readonly publisher: DomainEventPublisher;
     public constructor(db:SheinCartDatabase,publisher: DomainEventPublisher){
         this.db = db;
         this.publisher = publisher;
     }
-    public async addCart(user:User,data:string):Promise<SheinCart>{
-        var cart = new SheinCart(0,user.id,data,SheinCartStatus.Pending);
+    public async createCart(user:User,data:string):Promise<SheinCart>{
+        var cart = new SheinCart(0,user.id,data,SheinCartStatus.PendingPayment);
         cart = await this.db.add(cart);
         this.publisher.publish(new SheinCartAdded(cart));
         return cart;
@@ -25,5 +28,14 @@ export class SheinCartService implements ApplicationService{
         cart.status = status;
         this.publisher.publish(new SheinCartStatusChanged(cart));
         return changed;
+    }
+    public async getCart(id:number):Promise<SheinCart|null>{
+        return await this.db.get(id);
+    }
+    public async getAllByUser(userId:number):Promise<SheinCart[]>{
+        return await this.db.getAllByUser(userId);
+    }
+    public async remove(id:number):Promise<boolean>{
+        return await this.db.remove(id);
     }
 }

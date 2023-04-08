@@ -1,3 +1,4 @@
+import { Utils } from "../common/Utils";
 
 export class SheinCart{
     id:number;
@@ -14,9 +15,19 @@ export class SheinCart{
         this.data = data;
         this.status = status;
     }
+    
+  public toJSON(): any {
+    return {
+        id:Utils.Encode(this.id),
+        user_id : this.user_id,
+        data:this.data,
+        status : this.status
+    };
+  }
 }
 export enum SheinCartStatus{
-    Pending,
-    Completed,
-    Removed
+    PendingPayment=0,
+    PendingOrder=1,
+    Completed=2,
+    Removed=3
  }

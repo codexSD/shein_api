@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import { check } from 'express-validator';
-import { Permission } from '../models/permissions';
-import { safeRoute,safeTokenizedRoute } from './safe.route';
-import { UserController } from './user.controller';
+import { Permission } from '../../models/permissions';
+import { safeRoute, safeTokenizedRoute } from '../safe.route';
+import { UserController } from '../user.controller';
 
-const router: Router = Router();
+const userRouter: Router = Router();
 const userController = new UserController();
-router.post(
+userRouter.post(
   '/',
   [
     check('name', 'Field required').exists().isString(),
@@ -17,7 +17,7 @@ router.post(
   safeRoute(userController.create)
 );
 
-router.put(
+userRouter.put(
   '/',
   [
     check('name','Field required').exists(),
@@ -26,7 +26,7 @@ router.put(
 );
 
 //Login
-router.post(
+userRouter.post(
   '/login',
   [
     check('password', 'Field required').exists(),
@@ -36,4 +36,4 @@ router.post(
   safeRoute(userController.login)
 );
 
-export default router;
+export default userRouter;

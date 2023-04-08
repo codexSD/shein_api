@@ -5,6 +5,9 @@ import service from "../service";
 import { ApplicationService } from "./application.service";
 
 export class SheinCartPaymentService implements ApplicationService{
+    static getType(): string {
+        return 'SheinCartPaymentService';
+    }
     private readonly db:SheinCartPaymentDatabase;
     constructor(db:SheinCartPaymentDatabase){
         this.db = db;

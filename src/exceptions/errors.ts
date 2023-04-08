@@ -16,3 +16,6 @@ export class LoginNotValid extends CustomError{
 export class AuthorizationError extends CustomError{
     constructor(){super("Authorization Error");}
 }
+export class CartNotFounded extends CustomError{
+    constructor(){super("Cart Not Founded");}
+}

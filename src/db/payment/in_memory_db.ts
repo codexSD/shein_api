@@ -3,6 +3,19 @@ import { User } from "../../models/user";
 import { PaymentDatabase } from "./paymentDatabase";
 
 export class InMemoryPaymentDatabase implements PaymentDatabase{
+    getAll(ids: number[]): Promise<Payment[]> {
+        var payments:Payment[] = [];
+        for (const id of ids) {
+            for (let i = 0; i < this.payments.length; i++) {
+                const pmt = this.payments[i];
+                if(id == pmt.id){
+                    payments.push(pmt);
+                    break;
+                }
+            }
+        }
+        return Promise.resolve(payments);
+    }
     add(payment: Payment): Promise<Payment> {
         payment.id = this.counter++;
         this.payments.push(payment);

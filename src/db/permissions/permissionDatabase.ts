@@ -3,6 +3,7 @@ import { User } from "../../models/user";
 
 export interface RoleDatabase{
     createRole(role:Role):Promise<Role>;
+    updateRole(role:Role):Promise<boolean>;
     removeRole(role:Role):Promise<boolean>;
     getAllRoles():Promise<Role[]>;
     getRole(id:number):Promise<Role|null>;

@@ -1,3 +1,6 @@
+import { RoleMustHavePermissions, UnknownPermission } from "../exceptions/errors";
+import { Permission } from "../models/permissions";
+
 export class Utils{
     public static Encode(value:number):string{
         var rep = '';
@@ -20,5 +23,18 @@ export class Utils{
             number += baseStr.indexOf(value[i]);
         }
         return number;
+    }
+    public static GetPermissionsFromRequest(permissionReqVar:any) : Permission[]{
+        var perms = JSON.parse(permissionReqVar);
+        if(!Array.isArray(perms)) throw new RoleMustHavePermissions();
+        var permissions:Permission[] = [];
+        for (let index = 0; index < perms.length; index++) {
+            const element = perms[index];
+            var num = Number.parseInt(element);
+            if(!num || !Permission[num]) throw new UnknownPermission();
+            permissions.push(num);
+        }
+        if(permissions.length == 0) throw new RoleMustHavePermissions();
+        return permissions;
     }
 }

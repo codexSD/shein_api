@@ -13,7 +13,7 @@ export class InMemorySheinCartPaymentDatabase implements SheinCartPaymentDatabas
     remove(cart: SheinCart, payment: Payment): Promise<boolean> {
         for(var i = 0;i<this.values.length;i++) {
             if(this.values[i].cartId == cart.id && this.values[i].paymentId == payment.id)
-            this.values = this.values.splice(i,1);
+            this.values.splice(i,1);
         }
         return Promise.resolve(true);
     }

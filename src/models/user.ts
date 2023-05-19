@@ -24,4 +24,12 @@ export class User {
       name: this.name,
     };
   }
+  public asArray():any{
+    return{
+      id: this.id,
+      phone: this.phone.getValue(),
+      name: this.name,
+      password: this.password.getHashedValue(),
+    }
+  }
 }

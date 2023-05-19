@@ -2,27 +2,36 @@ import { Router } from 'express';
 import { check } from 'express-validator';
 import { Permission } from '../../models/permissions';
 import { safeRoute, safeTokenizedRoute } from '../safe.route';
-import { UserController } from '../user.controller';
+import { UserController } from '../Controllers/user.controller';
 
 const userRouter: Router = Router();
 const userController = new UserController();
+
+userRouter.get(
+  '/get',
+  [
+    check('id', 'Field required').exists().isNumeric(),
+  ],
+  safeTokenizedRoute(userController.get,[Permission.GetUser])
+);
 userRouter.post(
-  '/',
+  '/create',
   [
     check('name', 'Field required').exists().isString(),
     check('password', 'Field required').exists().isString(),
     check('key', 'Field required').exists().isNumeric(),
     check('phone', 'Field required').exists().isNumeric(),
   ],
-  safeRoute(userController.create)
+  safeTokenizedRoute(userController.create,[Permission.CreateUser])
 );
 
-userRouter.put(
-  '/',
+userRouter.post(
+  '/update',
   [
-    check('name','Field required').exists(),
+    check('uid','Field required').exists().isNumeric(),
+    check('name','Field required').exists().isString(),
   ],
-  safeTokenizedRoute(userController.updateName,[Permission.PaymentStatusChange])
+  safeTokenizedRoute(userController.updateName,[Permission.UpdateUser])
 );
 
 //Login

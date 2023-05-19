@@ -4,7 +4,7 @@ import { PasswordNotValid } from "../exceptions/errors";
 export class Password{
     private static MIN_PASS_LENGTH:number = 6;
     // private static SALT_ROUNDS:number = 6;
-    password:string;
+    private password:string;
     constructor(password:string){
         this.password = password;
     }
@@ -24,6 +24,9 @@ export class Password{
         // const passHash = await hash(password,this.SALT_ROUNDS);
         console.log('value:'+password + '\t hash:'+passHash);        
         return new Password(passHash);
+    }
+    public getHashedValue(){
+        return this.password;
     }
 
 }

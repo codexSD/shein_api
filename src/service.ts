@@ -3,7 +3,6 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import apiV1 from './api/index';
 import { UserService } from './application/user.service';
 import { ApplicationService } from './application/application.service';
 import { UserInMemoryDb } from './db/user/in_memory_db';
@@ -27,7 +26,13 @@ import { env } from 'process';
 import userRouter from './api/routes/user.router';
 import sheinCartRouter from './api/routes/sheinCart.router';
 import { Permission, Role } from './models/permissions';
-import { TokenController } from './api/token.controller';
+import { TokenController } from './api/Controllers/token.controller';
+import roleRouter from './api/routes/role.router';
+import userRoleRouter from './api/routes/userRole.router';
+import { ProductService } from './application/product.service';
+import { InMemoryProductDatabase } from './db/product/in_memory_database';
+import { StoreService } from './application/store.service';
+import { InMemoryStoreDatabase } from './db/store/in_memory_db';
 
 class Service {
   private readonly _express: express.Application;
@@ -60,6 +65,12 @@ class Service {
   get sheinCartPaymentService():SheinCartPaymentService{
     return this.appServices.get(SheinCartPaymentService.getType()) as SheinCartPaymentService;
   }
+  get productService():ProductService{
+    return this.appServices.get(ProductService.getType()) as ProductService;
+  }
+  get storeService():StoreService{
+    return this.appServices.get(StoreService.getType()) as StoreService;
+  }
   constructor() {
     this._express = express();
     this._appServices = new Map<string, ApplicationService>();
@@ -76,11 +87,9 @@ class Service {
   private async setData():Promise<void>{
     var user = await this.userService.create(new User('sara',PhoneNumber.of(249,921125426),await Password.of('123456789')));
     var token = await new TokenController().signin(user);
-    console.log("token:");
-    console.log(token);
-    
-    // await this.tokenService.create(user);
-    var role = new Role(0,[Permission.PaymentStatusChange,Permission.SheinCartApprove]);
+    var role = new Role(0,'test',[]);
+    role.isRoot = true;
+    // var role = new Role(0,'test',[Permission.PaymentStatusChange,Permission.SheinCartApprove]);
     role = await this.roleService.CreateRole(role);
     await this.userRoleService.AddUserRole(user,role);
   }
@@ -92,11 +101,17 @@ class Service {
     this.appServices.set(SheinCartPaymentService.getType(),new SheinCartPaymentService(new InMemorySheinCartPaymentDatabase()));
     this.appServices.set(RoleService.getType(),new RoleService(new InMemoryRoleDatabase()));
     this.appServices.set(UserRoleService.getType(),new UserRoleService(new InMemoryUserRoleDatabase()));
+    this.appServices.set(ProductService.getType(),new ProductService(new InMemoryProductDatabase()));
+    this.appServices.set(StoreService.getType(),new StoreService(new InMemoryStoreDatabase()));
   }
   public setRoutes(): void {
     var baseApi = '/api/v1';
     // this._express.use(env.API_ROUTE+'user', userRouter);
+    this._express.use(baseApi+'/user', userRouter);
     this._express.use(baseApi+'/cart', sheinCartRouter);
+    this._express.use(baseApi+'/role', roleRouter);
+    this._express.use(baseApi+'/userRole', userRoleRouter);
+    this._express.use(baseApi+'/product', userRoleRouter);
   }
 
   private setMiddlewares(): void {

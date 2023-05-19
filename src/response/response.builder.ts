@@ -16,11 +16,19 @@ export class ResponseBuilder {
     return this;
   }
 
-  public err(message: string = '', errors: any = null) {
-    this.success = false;
-    this.errors = errors;
-    this.setMessage(message);
-    return this;
+  public static Error(errors: any = null) {
+    var res = new ResponseBuilder();
+    res.success = false;
+    res.errors = errors;
+    res.message = '';
+    return res;
+  }
+  public static Ok(data: any = null) {
+    var res = new ResponseBuilder();
+    res.success = true;
+    res.data = data;
+    res.message = '';
+    return res;
   }
 
   public setMessage(message: string) {

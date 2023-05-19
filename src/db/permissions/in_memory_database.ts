@@ -2,6 +2,15 @@ import { Role } from "../../models/permissions";
 import { RoleDatabase, UserRoleDatabase } from "./permissionDatabase";
 
 export class InMemoryRoleDatabase implements RoleDatabase{
+    updateRole(role: Role): Promise<boolean> {
+        for(var i=0;i<this.roles.length;i++){
+            if(this.roles[i].id == role.id){
+                this.roles[i] = role;
+                return Promise.resolve(true);
+            }
+        }
+        return Promise.resolve(false);
+    }
     private roles:Role[] = [];
     private counter = 1;
     createRole(role: Role): Promise<Role> {
@@ -12,7 +21,7 @@ export class InMemoryRoleDatabase implements RoleDatabase{
     removeRole(role: Role): Promise<boolean> {
         for(var i=0;i<this.roles.length;i++){
             if(this.roles[i].id == role.id){
-                this.roles = this.roles.splice(i,1);
+                this.roles.splice(i,1);
                 return Promise.resolve(true);
             }      
         }
@@ -62,7 +71,7 @@ export class InMemoryUserRoleDatabase implements UserRoleDatabase{
     removeUserRole(userId: number, roleId: number): Promise<boolean> {
         for(var i=0;i<this.ids.length;i++){
             if(this.ids[i].userId == userId && this.ids[i].roleId == roleId){
-                this.ids = this.ids.splice(i,1);
+                this.ids.splice(i,1);
                 return Promise.resolve(false);
             }
         }
@@ -72,7 +81,7 @@ export class InMemoryUserRoleDatabase implements UserRoleDatabase{
         var result = false;
         for(var i=0;i<this.ids.length;i++){
             if(this.ids[i].userId == userId){
-                this.ids = this.ids.splice(i,1);
+                this.ids.splice(i,1);
                 result = true;
                 i--;
             }

@@ -1,7 +1,7 @@
 import { UserDatabase } from '../db/user/interfaces/user_database';
 import { DomainEventPublisher } from '../events/interfaces';
 import { UserCreated, UserLoggedIn } from '../events/user';
-import { LoginNotValid, PhoneNumberIsNotUnique } from '../exceptions/errors';
+import { LoginNotValid, PhoneNumberIsNotUnique, UserNotFound } from '../exceptions/errors';
 import { User } from '../models/user';
 import { ApplicationService } from './application.service';
 import jwt from 'jsonwebtoken';
@@ -18,15 +18,17 @@ export class UserService implements ApplicationService {
     if (!(await this.userDatabase.isPhoneUnique(user.phone))) throw new PhoneNumberIsNotUnique();
     return this.createNewUser(user);
   }
-  public async updateName(id:number,name:String):Promise<boolean>{
-    return await this.userDatabase.updateName(id,name);
+  public async updateName(user:User):Promise<boolean>{
+    return await this.userDatabase.updateName(user);
   }
-  public async get(id:number):Promise<User|null>{
-    return await this.userDatabase.getUser(id);
+  public async get(id:number):Promise<User>{
+    var user = await this.userDatabase.getUser(id);
+    if(user == null) throw new UserNotFound();
+    return user;
   }
   private async createNewUser(user: User): Promise<User> {
     var newUser = await this.userDatabase.create(user);
-    this.publisher.publish(new UserCreated(user));
+    this.publisher.publish(new UserCreated(newUser));
     return newUser;
   }
   public async login(key:number,phone:number,password:string):Promise<User>{

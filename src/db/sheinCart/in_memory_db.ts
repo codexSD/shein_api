@@ -34,7 +34,7 @@ export class InMemorySheinCartDatabase implements SheinCartDatabase{
         for(var i=0;i<InMemorySheinCartDatabase.carts.length;i++){
             var cart = InMemorySheinCartDatabase.carts[i];
             if(cart.id == id) {
-                InMemorySheinCartDatabase.carts = InMemorySheinCartDatabase.carts.splice(i,1);
+                InMemorySheinCartDatabase.carts.splice(i,1);
                 return Promise.resolve(true);
             }
         }

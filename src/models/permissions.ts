@@ -22,12 +22,18 @@ export enum Permission{
     RemoveUserRole = 5002,
 
     //PRODUCT_PERMISSIONS
-    ReadProducts = 6000,
-    CreateProducts = 6001,
-    UpdateProducts = 6002,
-    DeleteProducts = 6003,
+    ReadProduct = 6000,
+    CreateProduct = 6001,
+    UpdateProduct = 6002,
+    DeleteProduct = 6003,
 
+    //STORE_PERMISSIONS
+    ReadStore = 7000,
+    CreateStore = 7001,
+    UpdateStore = 7002,
+    DeleteStore = 7003,
 }
+
 export class Role{
     public id:number;
     name:string;
@@ -37,8 +43,7 @@ export class Role{
         this.id = id;
         this.name = name;
         this.permissions = permissions;
-    }
-    
+    }    
     public hasPermission(permission:Permission):boolean{
         return this.isRoot || this.permissions.findIndex((perm)=>perm == permission) != -1;
     }

@@ -39,6 +39,7 @@ export const safeTokenizedRoute =  (
       var tokenController = new TokenController();
       var user:User = await tokenController.verify(req.body.tk);
       req.body.user = user;
+      req.body.tk = undefined;
       var userRoles = await service.userRoleService.getUserRoles(user);
       for(var permission of permissions){
         var founded = false;
@@ -52,11 +53,13 @@ export const safeTokenizedRoute =  (
       }
       await func(req,res);
     } catch (err:any) {
-      console.error(err);
-        if(err instanceof CustomError){
-          res.status((err as CustomError).code).send(ResponseBuilder.Error().setMessage(err.toString()));
-        }
-        else res.status(500).send(ResponseBuilder.Error().setMessage('Unknown Error'));
+      if(err instanceof CustomError){
+        res.status((err as CustomError).code).send(ResponseBuilder.Error().setMessage(err.toString()));
+      }
+      else {
+        console.error(err);
+        res.status(500).send(ResponseBuilder.Error().setMessage('Unknown Error'));
+      }
     }
   };
 };

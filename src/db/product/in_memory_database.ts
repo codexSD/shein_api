@@ -31,7 +31,7 @@ export class InMemoryProductDatabase implements ProductDatabase{
         return Promise.resolve(this.products);
     }
     add(product: Product): Promise<Product> {
-        product.id = UUID.create();
+        if(!product.id) product.id = UUID.create();
         this.products.push(product);
         return Promise.resolve(product);
     }
@@ -49,18 +49,20 @@ export class InMemoryProductDatabase implements ProductDatabase{
         for (let index = 0; index < this.products.length; index++) {
             const p = this.products[index];
             if(p.getId().getValue() == product.getId().getValue()){
-                this.products.slice(index,1);
+                this.products.splice(index,1);
                 return Promise.resolve(true);
             }
         }
         return Promise.resolve(false);
     }
     removeByStore(store: Store): Promise<boolean> {
-        for (let index = 0; index < this.products.length; index++) {
+        var index = 0;
+        while(index < this.products.length){
             const p = this.products[index];
             if(p.storeId.getValue() == store.getId().getValue()){
-                this.products.slice(index,1);
+                this.products.splice(index,1);
             }
+            else index ++;
         }
         return Promise.resolve(true);
 

@@ -33,6 +33,11 @@ import { ProductService } from './application/product.service';
 import { InMemoryProductDatabase } from './db/product/in_memory_database';
 import { StoreService } from './application/store.service';
 import { InMemoryStoreDatabase } from './db/store/in_memory_db';
+import productRouter from './api/routes/product.router';
+import storeRouter from './api/routes/store.router';
+import { Store } from './models/store';
+import { UUID } from './common/UUID';
+import { Product } from './models/product';
 
 class Service {
   private readonly _express: express.Application;
@@ -92,17 +97,33 @@ class Service {
     // var role = new Role(0,'test',[Permission.PaymentStatusChange,Permission.SheinCartApprove]);
     role = await this.roleService.CreateRole(role);
     await this.userRoleService.AddUserRole(user,role);
+
+    //add store
+    var store = new Store('Mac Store','Electronic store','');
+    store.id = UUID.of('a9962668-c653-4ede-ab48-21e650f64689');
+    await this.storeService.create(store);
+
+    var product = new Product('Mouse','laser mouse','',10.0,store.getId());
+    product.id = UUID.of('c878c332-4684-4ac8-a3c0-e437289bcdfa');
+    await this.productService.create(product);
+    //
+    //add product 
   }
   protected setApplicationServices(): void {
-    this.appServices.set(UserService.getType(), new UserService(new UserInMemoryDb(), this.publisher));
-    this.appServices.set(TokenService.getType(),new TokenService(new TokenInMemoryDb()));
-    this.appServices.set(PaymentService.getType(),new PaymentService(new InMemoryPaymentDatabase(),this.publisher));
-    this.appServices.set(SheinCartService.getType(),new SheinCartService(new InMemorySheinCartDatabase(),this.publisher));
-    this.appServices.set(SheinCartPaymentService.getType(),new SheinCartPaymentService(new InMemorySheinCartPaymentDatabase()));
-    this.appServices.set(RoleService.getType(),new RoleService(new InMemoryRoleDatabase()));
-    this.appServices.set(UserRoleService.getType(),new UserRoleService(new InMemoryUserRoleDatabase()));
-    this.appServices.set(ProductService.getType(),new ProductService(new InMemoryProductDatabase()));
-    this.appServices.set(StoreService.getType(),new StoreService(new InMemoryStoreDatabase()));
+    this.addService(UserService.getType(),new UserService(new UserInMemoryDb(), this.publisher));
+    this.addService(TokenService.getType(),new TokenService(new TokenInMemoryDb()));
+    this.addService(PaymentService.getType(),new PaymentService(new InMemoryPaymentDatabase(),this.publisher));
+    this.addService(SheinCartService.getType(),new SheinCartService(new InMemorySheinCartDatabase(),this.publisher));
+    this.addService(SheinCartPaymentService.getType(),new SheinCartPaymentService(new InMemorySheinCartPaymentDatabase()));
+    this.addService(RoleService.getType(),new RoleService(new InMemoryRoleDatabase()));
+    this.addService(UserRoleService.getType(),new UserRoleService(new InMemoryUserRoleDatabase()));
+    this.addService(ProductService.getType(),new ProductService(new InMemoryProductDatabase()));
+    this.addService(StoreService.getType(),new StoreService(new InMemoryStoreDatabase()));
+  }
+  private addService(type:string,service:ApplicationService){
+    if(this.appServices.has(type))
+      throw new Error('Service Name Conflict :)');
+    this.appServices.set(type,service);
   }
   public setRoutes(): void {
     var baseApi = '/api/v1';
@@ -111,7 +132,8 @@ class Service {
     this._express.use(baseApi+'/cart', sheinCartRouter);
     this._express.use(baseApi+'/role', roleRouter);
     this._express.use(baseApi+'/userRole', userRoleRouter);
-    this._express.use(baseApi+'/product', userRoleRouter);
+    this._express.use(baseApi+'/product', productRouter);
+    this._express.use(baseApi+'/store', storeRouter);
   }
 
   private setMiddlewares(): void {

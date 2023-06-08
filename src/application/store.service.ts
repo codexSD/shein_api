@@ -12,9 +12,9 @@ export class StoreService implements ApplicationService{
     constructor(db:StoreDatabase){
         this.db = db;
     }
-    public async read(uuid:UUID):Promise<Store>{
+    public async get(uuid:UUID):Promise<Store>{
         try {
-            var result = await this.db.read(uuid);
+            var result = await this.db.get(uuid);
             if(result == null)
                 throw new StoreNotFound();
             return result;
@@ -22,9 +22,9 @@ export class StoreService implements ApplicationService{
             throw new OperationFailed();
         }
     }
-    public async readAll():Promise<Store[]>{
+    public async getAll():Promise<Store[]>{
         try {
-            var result = await this.db.readAll();
+            var result = await this.db.getAll();
             return result;
         } catch (error) {
             throw new OperationFailed();

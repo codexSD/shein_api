@@ -8,7 +8,7 @@ import { ApplicationService } from "./application.service";
 export class ProductService implements ApplicationService{
     db:ProductDatabase;
     static getType(): string {
-        return 'StoreService';
+        return 'ProductService';
     }
     constructor(db:ProductDatabase) {
         this.db = db;
@@ -16,12 +16,12 @@ export class ProductService implements ApplicationService{
     public async get(uuid:UUID):Promise<Product>{
         try {
             var result = await this.db.get(uuid);
-            if(result == null)
-                throw new ProductNotFound();
-            return result;
         } catch (error) {
             throw new OperationFailed();
         }
+        if(result == null)
+            throw new ProductNotFound();
+        return result;
     }
     public async getAll():Promise<Product[]>{
         try {
